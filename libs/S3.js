@@ -22,13 +22,29 @@ const logger = require('./logger');
 module.exports = {
     testBucket: async function(accessKey, secretKey, endpoint, bucket){
         return new Promise((resolve, reject) => {
-            const spacesEndpoint = new AWS.Endpoint(endpoint);
-            const s3 = new AWS.S3({
-                endpoint: spacesEndpoint,
+            const config = {
                 signatureVersion: 'v4',
-                accessKeyId: accessKey,
-                secretAccessKey: secretKey
-            });
+                apiVersion: '2006-03-01'
+            };
+
+            // If undefined, the AWS SDK will pull from your local profile
+            // TODO: take AWS profile names as an argument (this will use "[default]")            
+            if (accessKey) {
+					  	  config.accessKeyId = accessKey;
+            }
+
+            if (secretKey) {
+                config.secretAccessKey = secretKey;
+            }
+
+            if (endpoint) {
+                const spacesEndpoint = new AWS.Endpoint(endpoint);
+                config.endpoint = spacesEndpoint;
+            }
+
+            console.log(config);
+            console.log(process.env);
+            const s3 = new AWS.S3(config);
 
             // Test connection
             s3.putObject({
@@ -40,6 +56,7 @@ module.exports = {
                     logger.info("Can write to S3");
                     resolve(true);
                 }else{
+                    console.log(err);
                     reject(new Error("Cannot connect to S3. Check your S3 configuration: " + err.code));
                 }
             });

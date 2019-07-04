@@ -1,0 +1,7 @@
+1. There are multiple ways to provision AWS resources (Lambda/fargate/ECS) - which to support?
+2. Region/instance types in the config
+3. Make the config file thing load the AWS provider
+4. Update docs
+5. Get secrets from environment
+6. Fix the snapshot area
+7. Fix the monitoring area
